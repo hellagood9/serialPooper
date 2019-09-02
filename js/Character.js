@@ -13,10 +13,6 @@ class Rectangle {
         this.x + this.width > obstacle.x &&
         this.y < obstacle.y + obstacle.height &&
         this.y + this.height > obstacle.y
-          // this.left < obstacle.right &&
-          // this.right > obstacle.left &&
-          // this.top < obstacle.bottom &&
-          // this.bottom > obstacle.top
       );
     } 
   }

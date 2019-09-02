@@ -19,10 +19,7 @@ canvas.height = canvasHeigth;
 let canvasPosX = 0;
 let canvasPosY = 0;
 
-// :::::: Helpers :::::: \\
-function random(max) {
-  return Math.floor(Math.random() * max);
-}
+
 
 function paint(ctx) {
   ctx.fillStyle = "#000";
@@ -41,25 +38,28 @@ function paint(ctx) {
   ctx.closePath();
 
   drawPlayer();
-  drawFood();
+  drawJagger();
   drawWalls();
 }
 
 // :::::: Character :::::: \\
-const characterWidth = 10;
-const characterHeight = 10;
+const characterWidth = 20;
+const characterHeight = 20;
 
 // Moving Character
 window.onkeydown = moveCharacter;
 
 function moveCharacter(e) {
+  console.log(player.x);
   if (!pause) {
     switch (e.code) {
       case "ArrowLeft":
         player.x -= speed;
+        
         for (i = 0, l = wall.length; i < l; i += 1) {
+          
           if (player.intersects(wall[i])) {
-            player.x = wall[i].x + player.width;
+            player.x = wall[i].x + wall[i].width;
           }
         }
         break;
@@ -68,6 +68,7 @@ function moveCharacter(e) {
         for (i = 0, l = wall.length; i < l; i += 1) {
           if (player.intersects(wall[i])) {
             player.x = wall[i].x - player.width;
+            
           }
         }
         break;
@@ -75,7 +76,8 @@ function moveCharacter(e) {
         player.y -= speed;
         for (i = 0, l = wall.length; i < l; i += 1) {
           if (player.intersects(wall[i])) {
-            player.y = wall[i].y + player.height;            
+            
+            player.y = wall[i].y + wall[i].height;
           }
         }
         break;
@@ -83,8 +85,8 @@ function moveCharacter(e) {
         player.y += speed;
         for (i = 0, l = wall.length; i < l; i += 1) {
           if (player.intersects(wall[i])) {
-            console.log("x e y", wall[i].x, wall[i].x)
-            player.y = wall[i].y - wall[i].height;
+            
+            player.y = wall[i].y - player.height;
           }
         }
         break;
@@ -110,32 +112,30 @@ function moveCharacter(e) {
     }
   }
 
-  // Handling out of canvas
-  if (player.x > canvasWidth - characterWidth) {
+  // :::::: Handling out of canvas :::::: \\
+
+  // "Out of grid" restrictions
+  if (player.x > canvasWidth - characterWidth)
     player.x = canvasWidth - characterWidth;
-    // player.x = 0;
-  }
-  if (player.y > canvasHeigth - characterHeight) {
+  if (player.y > canvasHeigth - characterHeight)
     player.y = canvasHeigth - characterHeight;
-    // player.y = 0;
-  }
-  if (player.x < 0) {
-    player.x = 0;
-    // player.x = canvasWidth - characterWidth;
-  }
-  if (player.y < 0) {
-    player.y = 0;
-    // player.y = canvasHeigth - characterHeight;
-  }
+  if (player.x < 0) player.x = 0;
+  if (player.y < 0) player.y = 0;
+
+  // No "Out of grid" restrictions
+  // if (player.x > canvasWidth - characterWidth) player.x = 0;
+  // if (player.y > canvasHeigth - characterHeight) player.y = 0;
+  // if (player.x < 0) player.x = canvasWidth - characterWidth;
+  // if (player.y < 0) player.y = canvasHeigth - characterHeight;
 }
 
 const player = new Rectangle(
-  canvasPosX,
-  canvasPosY,
+  canvasPosX, 
+  canvasPosY, 
   characterWidth,
   characterHeight
 );
-const food = new Rectangle(80, 80, 10, 10);
+const bottle = new Rectangle(80, 80, 10, 10);
 
 // Draw player
 function drawPlayer() {
@@ -144,19 +144,19 @@ function drawPlayer() {
   player.fill(ctx);
   ctx.closePath();
 
-  // Food Intersects
-  if (player.intersects(food)) {
+  // Jagger Intersects
+  if (player.intersects(bottle)) {
     score++;
-    food.x = random(canvasWidth / 10 - 1) * 10;
-    food.y = random(canvasHeigth / 10 - 1) * 10;
+    bottle.x = random(canvasWidth / 10 - 1) * 10;
+    bottle.y = random(canvasHeigth / 10 - 1) * 10;
   }
 }
 
-// Draw food
-function drawFood() {
+// Draw Jagger
+function drawJagger() {
   ctx.beginPath();
   ctx.fillStyle = "#f00";
-  food.fill(ctx);
+  bottle.fill(ctx);
   ctx.closePath();
 }
 
@@ -167,11 +167,11 @@ function drawWalls() {
     wall[i].fill(ctx);
   }
 
-  // Wall Intersects
+  // The bottle does not match the position of the wall.
   for (i = 0, l = wall.length; i < l; i += 1) {
-    if (food.intersects(wall[i])) {
-      food.x = random(canvas.width / characterWidth - 1) * characterWidth;
-      food.y = random(canvas.height / characterHeight - 1) * characterHeight;
+    if (bottle.intersects(wall[i])) {
+      bottle.x = random(canvas.width / characterWidth - 1) * characterWidth;
+      bottle.y = random(canvas.height / characterHeight - 1) * characterHeight;
     }
 
     if (player.intersects(wall[i])) {
@@ -222,18 +222,18 @@ let wall = [];
 // wall.push(new Rectangle(230, 50, 10, 10));
 // wall.push(new Rectangle(200, 100, 10, 10));
 
-// wall.push(new Rectangle(170, 30, 120, 10));
+wall.push(new Rectangle(170, 30, 120, 10));
 wall.push(new Rectangle(90, 100, 100, 30));
-// wall.push(new Rectangle(230, 60, 60, 80));
-// wall.push(new Rectangle(200, 190, 30, 30));
+wall.push(new Rectangle(230, 60, 60, 80));
+wall.push(new Rectangle(200, 190, 30, 30));
 
 // Game Over
 function reset() {
   score = 0;
   player.x = 40;
   player.y = 40;
-  food.x = random(canvas.width / 10 - 1) * 10;
-  food.y = random(canvas.height / 10 - 1) * 10;
+  bottle.x = random(canvas.width / 10 - 1) * 10;
+  bottle.y = random(canvas.height / 10 - 1) * 10;
   gameover = false;
 }
 
