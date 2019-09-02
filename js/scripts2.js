@@ -1,6 +1,5 @@
 // :::::: Global :::::: \\
 let counter = 0;
-let speed = 10;
 let canvasWidth = 500;
 let canvasHeigth = 400;
 let fps = 60;
@@ -19,8 +18,6 @@ canvas.height = canvasHeigth;
 let canvasPosX = 0;
 let canvasPosY = 0;
 
-
-
 function paint(ctx) {
   ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, canvasWidth, canvasHeigth);
@@ -34,6 +31,7 @@ function paint(ctx) {
   // Draw score
   ctx.beginPath();
   ctx.fillStyle = "#fff";
+  ctx.textAlign = "start"
   ctx.fillText("SCORE: " + score, 10, 20);
   ctx.closePath();
 
@@ -47,17 +45,15 @@ const characterWidth = 20;
 const characterHeight = 20;
 
 // Moving Character
-window.onkeydown = moveCharacter;
+// window.onkeydown = moveCharacter;
 
 function moveCharacter(e) {
-  console.log(player.x);
   if (!pause) {
     switch (e.code) {
       case "ArrowLeft":
         player.x -= speed;
-        
+
         for (i = 0, l = wall.length; i < l; i += 1) {
-          
           if (player.intersects(wall[i])) {
             player.x = wall[i].x + wall[i].width;
           }
@@ -68,7 +64,6 @@ function moveCharacter(e) {
         for (i = 0, l = wall.length; i < l; i += 1) {
           if (player.intersects(wall[i])) {
             player.x = wall[i].x - player.width;
-            
           }
         }
         break;
@@ -76,7 +71,6 @@ function moveCharacter(e) {
         player.y -= speed;
         for (i = 0, l = wall.length; i < l; i += 1) {
           if (player.intersects(wall[i])) {
-            
             player.y = wall[i].y + wall[i].height;
           }
         }
@@ -85,7 +79,6 @@ function moveCharacter(e) {
         player.y += speed;
         for (i = 0, l = wall.length; i < l; i += 1) {
           if (player.intersects(wall[i])) {
-            
             player.y = wall[i].y - player.height;
           }
         }
@@ -95,46 +88,38 @@ function moveCharacter(e) {
       //   break;
     }
   }
+}
 
+document.addEventListener("keydown", e => {
   if (e.code === "Space") {
     pause = !pause;
+
     if (pause) {
+      ctx.beginPath();
+      ctx.globalAlpha = 0.7;
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeigth);
+      ctx.closePath();
+
+      ctx.globalAlpha = 1;
+
       ctx.beginPath();
       ctx.fillStyle = "#ff00ff";
       // ctx.font = "30px Arial";
-      ctx.fillText("PAUSE", canvasWidth / 2 - 20, canvasHeigth / 2 - 20);
+      ctx.textAlign = "center"
+      ctx.fillText("PAUSE", canvasWidth / 2, canvasHeigth / 2);
       ctx.closePath();
-    } else {
-      ctx.beginPath();
-      ctx.fillStyle = "#ffffff";
-      ctx.fillText("GAME OVER", canvasWidth / 2 - 20, canvasHeigth / 2 - 20);
-      ctx.closePath();
-    }
+    } 
   }
-
-  // :::::: Handling out of canvas :::::: \\
-
-  // "Out of grid" restrictions
-  if (player.x > canvasWidth - characterWidth)
-    player.x = canvasWidth - characterWidth;
-  if (player.y > canvasHeigth - characterHeight)
-    player.y = canvasHeigth - characterHeight;
-  if (player.x < 0) player.x = 0;
-  if (player.y < 0) player.y = 0;
-
-  // No "Out of grid" restrictions
-  // if (player.x > canvasWidth - characterWidth) player.x = 0;
-  // if (player.y > canvasHeigth - characterHeight) player.y = 0;
-  // if (player.x < 0) player.x = canvasWidth - characterWidth;
-  // if (player.y < 0) player.y = canvasHeigth - characterHeight;
-}
+});
 
 const player = new Rectangle(
-  canvasPosX, 
-  canvasPosY, 
+  canvasPosX,
+  canvasPosY,
   characterWidth,
   characterHeight
 );
+
 const bottle = new Rectangle(80, 80, 10, 10);
 
 // Draw player
@@ -179,7 +164,8 @@ function drawWalls() {
 
       ctx.beginPath();
       ctx.fillStyle = "#ffffff";
-      ctx.fillText("GAME OVER", canvasWidth / 2 - 20, canvasHeigth / 2 - 20);
+      ctx.textAlign = "center"
+      ctx.fillText("GAME OVER", canvasWidth / 2, canvasHeigth / 2);
       ctx.closePath();
 
       reset();
@@ -217,11 +203,6 @@ for (i = 0, l = stars.length; i < l; i++) {
 let wall = [];
 
 // Create walls
-// wall.push(new Rectangle(170, 50, 10, 10));
-// wall.push(new Rectangle(90, 100, 10, 10));
-// wall.push(new Rectangle(230, 50, 10, 10));
-// wall.push(new Rectangle(200, 100, 10, 10));
-
 wall.push(new Rectangle(170, 30, 120, 10));
 wall.push(new Rectangle(90, 100, 100, 30));
 wall.push(new Rectangle(230, 60, 60, 80));
@@ -248,5 +229,6 @@ intervalId = setInterval(() => {
   ctx.clearRect(canvasPosX, canvasPosY, canvasWidth, canvasHeigth);
 
   run();
+  player.movePlayer();
   // counter++;
 }, 1000 / fps);
