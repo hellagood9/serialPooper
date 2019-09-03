@@ -1,7 +1,9 @@
 // :::::: Global :::::: \\
 let counter = 0;
+
 let canvasWidth = 300;
 let canvasHeigth = 200;
+
 let fps = 60;
 let score = 0;
 let gameover = true;
@@ -18,27 +20,26 @@ let canvasPosX = 0;
 let canvasPosY = 0;
 
 function paint(ctx) {
-  ctx.fillStyle = "#000";
+  ctx.fillStyle = "#c5aea4";
   ctx.fillRect(0, 0, canvasWidth, canvasHeigth);
 
   // Draw score
   ctx.beginPath();
   ctx.fillStyle = "#fff";
-  ctx.textAlign = "start"
+  ctx.textAlign = "start";
   ctx.fillText("SCORE: " + score, 10, 20);
   ctx.closePath();
 
-
   // Draw walls
-  ctx.fillStyle = '#999';
+  ctx.fillStyle = "#b29a6d";
   for (i = 0; i < wall.length; i += 1) {
-      wall[i].fill(ctx);
+    wall[i].fill(ctx);
   }
-  
+
   // Draw lava
-  ctx.fillStyle = '#f00';
+  ctx.fillStyle = "#bd7631";
   for (i = 0; i < lava.length; i += 1) {
-      lava[i].fill(ctx);
+    lava[i].fill(ctx);
   }
   drawPlayer();
   drawJagger();
@@ -48,52 +49,6 @@ function paint(ctx) {
 // :::::: Character :::::: \\
 const characterWidth = 10;
 const characterHeight = 10;
-
-// Moving Character
-// window.onkeydown = moveCharacter;
-
-function moveCharacter(e) {
-  if (!pause) {
-    switch (e.code) {
-      case "ArrowLeft":
-        player.x -= speed;
-
-        for (i = 0, l = wall.length; i < l; i += 1) {
-          if (player.intersects(wall[i])) {
-            player.x = wall[i].x + wall[i].width;
-          }
-        }
-        break;
-      case "ArrowRight":
-        player.x += speed;
-        for (i = 0, l = wall.length; i < l; i += 1) {
-          if (player.intersects(wall[i])) {
-            player.x = wall[i].x - player.width;
-          }
-        }
-        break;
-      case "ArrowUp":
-        player.y -= speed;
-        for (i = 0, l = wall.length; i < l; i += 1) {
-          if (player.intersects(wall[i])) {
-            player.y = wall[i].y + wall[i].height;
-          }
-        }
-        break;
-      case "ArrowDown":
-        player.y += speed;
-        for (i = 0, l = wall.length; i < l; i += 1) {
-          if (player.intersects(wall[i])) {
-            player.y = wall[i].y - player.height;
-          }
-        }
-        break;
-      // case "KeyR":
-      //   player.x += speed * 2;
-      //   break;
-    }
-  }
-}
 
 document.addEventListener("keydown", e => {
   if (e.code === "Space") {
@@ -110,12 +65,11 @@ document.addEventListener("keydown", e => {
 
       ctx.beginPath();
       ctx.fillStyle = "#ff00ff";
-      // ctx.font = "30px Arial";
-      ctx.textAlign = "center"
+      ctx.textAlign = "center";
       ctx.fillText("PAUSE", canvasWidth / 2, canvasHeigth / 2);
       ctx.closePath();
-    } 
-  } else if (e.code === "Enter") return reset()
+    }
+  } else if (e.code === "Enter") return reset();
 });
 
 const player = new Rectangle(
@@ -153,8 +107,8 @@ function drawJagger() {
 // Player Intersects Lava
 for (i = 0; i < lava.length; i += 1) {
   if (player.intersects(lava[i])) {
-      gameover = true;
-      pause = true;
+    gameover = true;
+    pause = true;
   }
 }
 
@@ -177,7 +131,7 @@ function drawWalls() {
 
       ctx.beginPath();
       ctx.fillStyle = "#ffffff";
-      ctx.textAlign = "center"
+      ctx.textAlign = "center";
       ctx.fillText("GAME OVER", canvasWidth / 2, canvasHeigth / 2);
       ctx.closePath();
 
@@ -202,6 +156,7 @@ function reset() {
   player.y = 40;
   bottle.x = random(canvas.width / 10 - 1) * 10;
   bottle.y = random(canvas.height / 10 - 1) * 10;
+  setMap(maps[0], 10);
   gameover = false;
 }
 
@@ -218,7 +173,26 @@ intervalId = setInterval(() => {
   run();
 
   // Set map
-  setMap(map0, 10);
-  
+  // setMap(maps[0], 10);
+
+  // Out Screen
+  if (player.x > canvasWidth) {
+    currentMap += 1;
+    if (currentMap > maps.length - 1) {
+      currentMap = 0;
+    }
+    setMap(maps[currentMap], 10);
+    player.x = 0;
+  }
+
+  if (player.x < 0) {
+    currentMap -= 1;
+    if (currentMap < 0) {
+      currentMap = maps.length - 1;
+    }
+    setMap(maps[currentMap], 10);
+    player.x = canvasWidth;
+  }
+
   player.movePlayer();
 }, 1000 / fps);
