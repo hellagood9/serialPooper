@@ -5,18 +5,13 @@ class Rectangle {
     this.width = width || 10;
     this.height = height || 10;
 
-//     // :::::: Character :::::: \\
-// const characterWidth = 10;
-// const characterHeight = 10;
-
+    this.speed = 1.5;
     this.keyState = {
       keyLeft: false,
       keyRight: false,
       keyUp: false,
       keyDown: false
     };
-
-    this.speed = 1.5;
   }
 
   intersects(obstacle) {
@@ -30,32 +25,25 @@ class Rectangle {
     }
   }
 
-  fill(ctx) {
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-  }
-
-  isIntersection(obstacle) {
+  isIntersection(direction, obstacle) {
     for (let i = 0; i < obstacle.length; i++) {
       if (this.intersects(obstacle[i])) {
-        switch(this.keyState) {
-          case ["keyLeft"]:
-            this.x -= this.speed;
-            break;
-
-            case ["keyRight"]:
-            return this.x = wall[i].x - this.width;
-            break;
-
-            case ["keyUp"]:
-            this.y -= this.speed;
-            break;
-
-            case ["keyDown"]:
-            this.y += this.speed;
-            break;
+        switch (direction) {
+          case "left":
+            return (this.x = obstacle[i].x + obstacle[i].width);
+          case "right":
+            return (this.x = obstacle[i].x - this.width);
+          case "up":
+            return (this.y = obstacle[i].y + obstacle[i].height);
+          case "down":
+            return (this.y = obstacle[i].y - this.height);
         }
       }
     }
+  }
+
+  fill(ctx) {
+    ctx.fillRect(this.x, this.y, this.width, this.height);
   }
 
   movePlayer() {
@@ -97,52 +85,25 @@ class Rectangle {
       }
     });
 
-    // if (this.keyState.keyLeft) this.x -= this.speed;
-    // if (this.keyState.keyRight) this.x += this.speed;
-    // if (this.keyState.keyUp) this.y -= this.speed;
-    // if (this.keyState.keyDown) this.y += this.speed;
-
-    // left
     if (this.keyState.keyLeft) {
       this.x -= this.speed;
-      for (let i = 0; i < wall.length; i++) {
-        if (this.intersects(wall[i])) {
-          this.x = wall[i].x + wall[i].width;
-        }
-      }
+      this.isIntersection("left", wall);
     }
 
-    // right
     if (this.keyState.keyRight) {
       this.x += this.speed;
-      for (let i = 0; i < wall.length; i++) {
-        if (this.intersects(wall[i])) {
-          this.x = wall[i].x - this.width;
-        }
-      }
-      // this.isIntersection(wall)
+      this.isIntersection("right", wall);
     }
 
-    // up
     if (this.keyState.keyUp) {
       this.y -= this.speed;
-      for (let i = 0; i < wall.length; i++) {
-        if (this.intersects(wall[i])) {
-          this.y = wall[i].y + wall[i].height;
-        }
-      }
+      this.isIntersection("up", wall);
     }
 
-    // down
     if (this.keyState.keyDown) {
       this.y += this.speed;
-      for (let i = 0; i < wall.length; i++) {
-        if (this.intersects(wall[i])) {
-          this.y = wall[i].y - this.height;
-        }
-      }
+      this.isIntersection("down", wall);
     }
-    
 
     // "Out of grid" restrictions
     // if (this.x > canvasWidth - characterWidth) this.x = canvasWidth - characterWidth;
