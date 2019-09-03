@@ -1,10 +1,9 @@
 // :::::: Global :::::: \\
 let counter = 0;
-let canvasWidth = 500;
-let canvasHeigth = 400;
+let canvasWidth = 300;
+let canvasHeigth = 200;
 let fps = 60;
 let score = 0;
-let stars = [];
 let gameover = true;
 let pause = false;
 let intervalId = undefined;
@@ -22,12 +21,6 @@ function paint(ctx) {
   ctx.fillStyle = "#000";
   ctx.fillRect(0, 0, canvasWidth, canvasHeigth);
 
-  for (i = 0, l = stars.length; i < l; i++) {
-    let c = 255 - Math.abs(100 - stars[i].timer);
-    ctx.fillStyle = "rgb(" + c + "," + c + "," + c + ")";
-    ctx.fillRect(stars[i].x, stars[i].y, 1, 1);
-  }
-
   // Draw score
   ctx.beginPath();
   ctx.fillStyle = "#fff";
@@ -35,14 +28,26 @@ function paint(ctx) {
   ctx.fillText("SCORE: " + score, 10, 20);
   ctx.closePath();
 
+
+  // Draw walls
+  ctx.fillStyle = '#999';
+  for (i = 0; i < wall.length; i += 1) {
+      wall[i].fill(ctx);
+  }
+  
+  // Draw lava
+  ctx.fillStyle = '#f00';
+  for (i = 0; i < lava.length; i += 1) {
+      lava[i].fill(ctx);
+  }
   drawPlayer();
   drawJagger();
-  drawWalls();
+  // drawWalls();
 }
 
 // :::::: Character :::::: \\
-const characterWidth = 20;
-const characterHeight = 20;
+const characterWidth = 10;
+const characterHeight = 10;
 
 // Moving Character
 // window.onkeydown = moveCharacter;
@@ -110,7 +115,7 @@ document.addEventListener("keydown", e => {
       ctx.fillText("PAUSE", canvasWidth / 2, canvasHeigth / 2);
       ctx.closePath();
     } 
-  }
+  } else if (e.code === "Enter") return reset()
 });
 
 const player = new Rectangle(
@@ -140,9 +145,17 @@ function drawPlayer() {
 // Draw Jagger
 function drawJagger() {
   ctx.beginPath();
-  ctx.fillStyle = "#f00";
+  ctx.fillStyle = "#4caf50";
   bottle.fill(ctx);
   ctx.closePath();
+}
+
+// Player Intersects Lava
+for (i = 0; i < lava.length; i += 1) {
+  if (player.intersects(lava[i])) {
+      gameover = true;
+      pause = true;
+  }
 }
 
 // Draw walls
@@ -173,40 +186,14 @@ function drawWalls() {
   }
 }
 
-// :::::: Stars :::::: \\
-class Star {
-  constructor(x, y, timer) {
-    this.x = x == null ? 0 : x;
-    this.y = y == null ? 0 : y;
-    this.timer = timer == null ? 0 : timer;
-  }
-}
-
-// Create stars
-Array(200)
-  .fill()
-  .forEach((x, idx) => {
-    return stars.push(
-      new Star(random(canvas.width), random(canvas.height), random(100))
-    );
-  });
-
-// Move Stars
-for (i = 0, l = stars.length; i < l; i++) {
-  stars[i].y++;
-  if (stars[i].y > canvas.height) stars[i].y = 0;
-  stars[i].timer += 10;
-  if (stars[i].timer > 100) stars[i].timer -= 100;
-}
-
 // :::::: Wall :::::: \\
-let wall = [];
+// let wall = [];
 
-// Create walls
-wall.push(new Rectangle(170, 30, 120, 10));
-wall.push(new Rectangle(90, 100, 100, 30));
-wall.push(new Rectangle(230, 60, 60, 80));
-wall.push(new Rectangle(200, 190, 30, 30));
+// // Create walls
+// wall.push(new Rectangle(170, 30, 120, 10));
+// wall.push(new Rectangle(90, 100, 100, 30));
+// wall.push(new Rectangle(230, 60, 60, 80));
+// wall.push(new Rectangle(200, 190, 30, 30));
 
 // Game Over
 function reset() {
@@ -229,6 +216,9 @@ intervalId = setInterval(() => {
   ctx.clearRect(canvasPosX, canvasPosY, canvasWidth, canvasHeigth);
 
   run();
+
+  // Set map
+  setMap(map0, 10);
+  
   player.movePlayer();
-  // counter++;
 }, 1000 / fps);

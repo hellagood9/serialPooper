@@ -12,7 +12,7 @@ class Rectangle {
       keyDown: false
     };
 
-    this.speed = 2;
+    this.speed = 1;
   }
 
   intersects(obstacle) {
@@ -35,60 +35,52 @@ class Rectangle {
   }
 
   movePlayer() {
-    // TEST
     document.addEventListener("keydown", e => {
       e.preventDefault();
-      if (e.keyCode === 37) {
-        this.keyState.keyLeft = true;
-      }
-      if (e.keyCode === 38) {
-        this.keyState.keyUp = true;
-      }
-      if (e.keyCode === 39) {
-        this.keyState.keyRight = true;
-      }
-      if (e.keyCode === 40) {
-        this.keyState.keyDown = true;
+
+      switch (e.keyCode) {
+        case 37:
+          this.keyState.keyLeft = true;
+          break;
+        case 38:
+          this.keyState.keyUp = true;
+          break;
+        case 39:
+          this.keyState.keyRight = true;
+          break;
+        case 40:
+          this.keyState.keyDown = true;
+          break;
       }
     });
+
     document.addEventListener("keyup", e => {
       e.preventDefault();
-      if (e.keyCode === 37) {
-        this.keyState.keyLeft = false;
-      }
-      if (e.keyCode === 38) {
-        this.keyState.keyUp = false;
-      }
-      if (e.keyCode === 39) {
-        this.keyState.keyRight = false;
-      }
-      if (e.keyCode === 40) {
-        this.keyState.keyDown = false;
+
+      switch (e.keyCode) {
+        case 37:
+          this.keyState.keyLeft = false;
+          break;
+        case 38:
+          this.keyState.keyUp = false;
+          break;
+        case 39:
+          this.keyState.keyRight = false;
+          break;
+        case 40:
+          this.keyState.keyDown = false;
+          break;
       }
     });
 
-    if (this.keyState.keyLeft) {
-      this.x -= this.speed;
-    }
-    if (this.keyState.keyRight) {
-      this.x += this.speed;
-    }
-
-    if (this.keyState.keyUp) {
-      this.y -= this.speed;
-    }
-
-    if (this.keyState.keyDown) {
-      this.y += this.speed;
-    }
-
-    // :::::: Handling out of canvas :::::: \\
+    if (this.keyState.keyLeft) this.x -= this.speed;
+    if (this.keyState.keyRight) this.x += this.speed;
+    if (this.keyState.keyUp) this.y -= this.speed;
+    if (this.keyState.keyDown) this.y += this.speed;
 
     // "Out of grid" restrictions
-    if (this.x > canvasWidth - characterWidth)
-      this.x = canvasWidth - characterWidth;
-    if (this.y > canvasHeigth - characterHeight)
-      this.y = canvasHeigth - characterHeight;
+    if (this.x > canvasWidth - characterWidth) this.x = canvasWidth - characterWidth;
+    if (this.y > canvasHeigth - characterHeight) this.y = canvasHeigth - characterHeight;
     if (this.x < 0) this.x = 0;
     if (this.y < 0) this.y = 0;
 
