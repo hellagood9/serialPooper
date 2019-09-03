@@ -93,6 +93,35 @@ class Rectangle {
     if (this.keyState.keyRight) {
       this.x += this.speed;
       this.isIntersection("right", wall);
+      this.isIntersection("right", lava);
+
+      // @@@@@@ test
+      // Player Intersects Lava
+      // for (let i = 0; i < lava.length; i++) {
+      //   if (this.intersects(lava[i])) {
+      //     pause = true;
+
+      //     ctx.beginPath();
+      //     ctx.fillStyle = "#ffffff";
+      //     ctx.textAlign = "center";
+      //     ctx.fillText("GAME OVER", canvasWidth / 2, canvasHeigth / 2);
+      //     ctx.closePath();
+
+      //     reset();
+      //   }
+      // }
+
+
+      // Player Intersects bottle
+      for (let i = 0; i < jagger.length; i++) {
+        if (this.intersects(jagger[i])) {
+          score++;
+          jagger.splice(i,1);
+          // ctx.clearRect(jagger[i].width, jagger[i].height, 0, 0);
+        }
+      }
+
+      // @@@@@@ end test
     }
 
     if (this.keyState.keyUp) {
@@ -104,17 +133,5 @@ class Rectangle {
       this.y += this.speed;
       this.isIntersection("down", wall);
     }
-
-    // "Out of grid" restrictions
-    // if (this.x > canvasWidth - characterWidth) this.x = canvasWidth - characterWidth;
-    // if (this.y > canvasHeigth - characterHeight) this.y = canvasHeigth - characterHeight;
-    // if (this.x < 0) this.x = 0;
-    // if (this.y < 0) this.y = 0;
-
-    // No "Out of grid" restrictions
-    // if (this.x > canvasWidth - characterWidth) this.x = 0;
-    // if (this.y > canvasHeigth - characterHeight) this.y = 0;
-    // if (this.x < 0) this.x = canvasWidth - characterWidth;
-    // if (this.y < 0) this.y = canvasHeigth - characterHeight;
   }
 }
