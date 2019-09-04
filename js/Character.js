@@ -4,6 +4,9 @@ class Rectangle {
     this.x = x || 0;
     this.width = width || 10;
     this.height = height || 10;
+    this.vx = 0;
+    this.vy = 0;
+
     this.health = 3;
     this.isPoopingArea = false;
 
@@ -146,5 +149,42 @@ class Rectangle {
         poopingArea.splice(i, 1);
       }
     });
+
+
+// Move enemies
+for (let i = 0; i < enemies.length; i++) {
+  if (enemies[i].vx !== 0) {
+      enemies[i].x += enemies[i].vx;
+
+      for (let j = 0; j < wall.length; j++) {
+          if (enemies[i].intersects(wall[j])) {
+              enemies[i].vx *= -1;
+              enemies[i].x += enemies[i].vx;
+              break;
+          }
+      }
+  }
+
+  if (enemies[i].vy !== 0) {
+      enemies[i].y += enemies[i].vy;
+
+      for (let j = 0; j < wall.length; j++) {
+          if (enemies[i].intersects(wall[j])) {
+              enemies[i].vy *= -1;
+              enemies[i].y += enemies[i].vy;
+              break;
+          }
+      }
+  }
+
+  // Player Intersects Enemy
+  if (player.intersects(enemies[i])) {
+      gameover = true;
+      pause = true;
+  }
+}
+
+
+
   }
 }
