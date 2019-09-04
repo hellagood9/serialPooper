@@ -1,13 +1,16 @@
 // :::::: Global :::::: \\
-let counter = 0;
-
+// let counter = 0;
+let currentMap = 0;
 let canvasWidth = 300;
 let canvasHeigth = 200;
 
 let fps = 60;
 let score = 0;
-let gameover = true;
+
+let lifeReduced = false;
+let gameover = false;
 let pause = false;
+
 let intervalId = undefined;
 
 // :::::: Canvas :::::: \\
@@ -15,9 +18,6 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 canvas.width = canvasWidth;
 canvas.height = canvasHeigth;
-
-let canvasPosX = 0;
-let canvasPosY = 0;
 
 function paint(ctx) {
   ctx.fillStyle = "#c5aea4";
@@ -32,74 +32,86 @@ function paint(ctx) {
 
   // Draw walls
   ctx.fillStyle = "#b29a6d";
-  for (i = 0; i < wall.length; i += 1) {
+  for (let i = 0; i < wall.length; i++) {
     wall[i].fill(ctx);
   }
 
-  // Draw lava
-  ctx.fillStyle = "#bd7631";
-  for (i = 0; i < lava.length; i += 1) {
-    lava[i].fill(ctx);
+  // Draw enemies
+  ctx.fillStyle = "#000";
+  for (let i = 0; i < enemies.length; i++) {
+    enemies[i].fill(ctx);
   }
 
-   // Draw bottle
+  // Draw water
+  ctx.fillStyle = "#bfe9fb";
+  for (let i = 0; i < water.length; i++) {
+    water[i].fill(ctx);
+  }
+
+  // Draw bottle
+  ctx.fillStyle = "#f6bffb";
+  for (let i = 0; i < bottles.length; i++) {
+    bottles[i].fill(ctx);
+  }
+
+  // Draw pooping area
   ctx.fillStyle = "#4caf50";
-  for (i = 0; i < jagger.length; i += 1) {
-    jagger[i].fill(ctx);
+  for (let i = 0; i < poopingArea.length; i++) {
+    poopingArea[i].fill(ctx);
   }
 
+  // Draw life
+  ctx.beginPath();
+  ctx.fillText("Health: " + player.health, 150, 20);
+  ctx.closePath();
 
   drawPlayer();
   // drawBottle();
   // drawWalls();
+
+
+  if (pause && lifeReduced && !gameover)
+    drawState(lifeReduced, "OOOPS! TRY AGAIN");
+
+  if (gameover) {
+    drawState(gameover, "GAME OVER");
+    gameover = !gameover;
+  }
 }
 
 // :::::: Character :::::: \\
 const characterWidth = 10;
 const characterHeight = 10;
 
+function drawState(state, string) {
+  if (state == true) {
+    ctx.beginPath();
+    ctx.globalAlpha = 0.7;
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeigth);
+    ctx.closePath();
+
+    ctx.globalAlpha = 1;
+
+    ctx.beginPath();
+    ctx.fillStyle = "#ff00ff";
+    ctx.textAlign = "center";
+    ctx.fillText(`${string}`, canvasWidth / 2, canvasHeigth / 2);
+    ctx.closePath();
+  }
+}
+
 document.addEventListener("keydown", e => {
   if (e.code === "Space") {
     pause = !pause;
 
-    // if (pause) {
-    //   ctx.beginPath();
-    //   ctx.globalAlpha = 0.7;
-    //   ctx.fillStyle = "#000";
-    //   ctx.fillRect(0, 0, canvasWidth, canvasHeigth);
-    //   ctx.closePath();
-
-    //   ctx.globalAlpha = 1;
-
-    //   ctx.beginPath();
-    //   ctx.fillStyle = "#ff00ff";
-    //   ctx.textAlign = "center";
-    //   ctx.fillText("PAUSE", canvasWidth / 2, canvasHeigth / 2);
-    //   ctx.closePath();
-    // }
-
-    // Draw pause
-    if (pause) {
-      ctx.textAlign = 'center';
-      if (gameover) {
-          ctx.fillText('GAMEOVER', 150, 100);
-      } else {
-          ctx.fillText('PAUSE', 150, 100);
-      }
-      ctx.textAlign = 'left';
-  }
-
+    drawState(pause, "PAUSE");
   } else if (e.code === "Enter") return reset();
 });
 
-const player = new Rectangle(
-  canvasPosX,
-  canvasPosY,
-  characterWidth,
-  characterHeight
-);
+const player = new Rectangle(40, 100, characterWidth, characterHeight);
 
-const bottle = new Rectangle(80, 80, 10, 10);
+// const bottle = new Rectangle(80, 80, 10, 10);
 
 // Draw player
 function drawPlayer() {
@@ -107,84 +119,49 @@ function drawPlayer() {
   ctx.fillStyle = "#fbba18";
   player.fill(ctx);
   ctx.closePath();
-
-  // Bottle Intersects
-  if (player.intersects(bottle)) {
-    score++;
-    bottle.x = random(canvasWidth / 10 - 1) * 10;
-    bottle.y = random(canvasHeigth / 10 - 1) * 10;
-  }
 }
 
 // Draw Bottle
-function drawBottle() {
-  ctx.beginPath();
-  ctx.fillStyle = "#4caf50";
-  bottle.fill(ctx);
-  ctx.closePath();
-}
-
-// Player Intersects Lava
-for (i = 0; i < lava.length; i += 1) {
-  if (player.intersects(lava[i])) {
-    gameover = true;
-    pause = true;
-  }
-}
+// function drawBottle() {
+//   ctx.beginPath();
+//   ctx.fillStyle = "#4caf50";
+//   bottle.fill(ctx);
+//   ctx.closePath();
+// }
 
 // Draw walls
-function drawWalls() {
-  ctx.fillStyle = "#999";
-  for (let i = 0; i < wall.length; i ++) {
-    wall[i].fill(ctx);
-  }
-
-  // The bottle does not match the position of the wall.
-  for (let i = 0; i < wall.length; i ++) {
-    if (bottle.intersects(wall[i])) {
-      bottle.x = random(canvas.width / characterWidth - 1) * characterWidth;
-      bottle.y = random(canvas.height / characterHeight - 1) * characterHeight;
-    }
-
-    if (player.intersects(wall[i])) {
-      pause = true;
-
-      ctx.beginPath();
-      ctx.fillStyle = "#ffffff";
-      ctx.textAlign = "center";
-      ctx.fillText("GAME OVER", canvasWidth / 2, canvasHeigth / 2);
-      ctx.closePath();
-
-      reset();
-    }
-  }
-}
+// function drawWalls() {
+//   ctx.fillStyle = "#999";
+//   for (let i = 0; i < wall.length; i ++) {
+//     wall[i].fill(ctx);
+//   }
+// }
 
 // Game Over
 function reset() {
   score = 0;
   player.x = 40;
   player.y = 100;
-  // bottle.x = random(canvas.width / 10 - 1) * 10;
-  // bottle.y = random(canvas.height / 10 - 1) * 10;
-  gameover = false;
+  // player.health = 3
 }
 
-// :::::: RUN :::::: \\
-function run() {
+function gameEnded() {
+  score = 0;
+
+  player.health = 3;
+  player.x = 40;
+  player.y = 95;
+}
+
+// :::::: START :::::: \\
+function start() {
   paint(ctx);
+  // loadMaps()
 }
 
-intervalId = setInterval(() => {
-  if (pause) return;
-
-  ctx.clearRect(canvasPosX, canvasPosY, canvasWidth, canvasHeigth);
-
-  run();
-
-  // Out Screen
+function loadMaps() {
   if (player.x > canvasWidth) {
-    currentMap += 1;
+    currentMap++;
     if (currentMap > maps.length - 1) {
       currentMap = 0;
     }
@@ -193,13 +170,24 @@ intervalId = setInterval(() => {
   }
 
   if (player.x < 0) {
-    currentMap -= 1;
+    currentMap--;
     if (currentMap < 0) {
       currentMap = maps.length - 1;
     }
     setMap(maps[currentMap], 10);
     player.x = canvasWidth;
   }
+}
+
+setMap(maps[currentMap], 10);
+
+intervalId = setInterval(() => {
+  if (pause) return;
+
+  ctx.clearRect(0, 0, canvasWidth, canvasHeigth);
+
+  loadMaps();
 
   player.movePlayer();
+  start();
 }, 1000 / fps);

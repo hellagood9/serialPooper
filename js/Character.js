@@ -4,13 +4,16 @@ class Rectangle {
     this.x = x || 0;
     this.width = width || 10;
     this.height = height || 10;
+    this.health = 3;
+    this.isPoopingArea = false;
 
-    this.speed = 1.5;
+    this.speed = 1.25;
     this.keyState = {
       keyLeft: false,
       keyRight: false,
       keyUp: false,
-      keyDown: false
+      keyDown: false,
+      keySpace: false
     };
   }
 
@@ -25,19 +28,10 @@ class Rectangle {
     }
   }
 
-  isIntersection(direction, obstacle) {
-    for (let i = 0; i < obstacle.length; i++) {
-      if (this.intersects(obstacle[i])) {
-        switch (direction) {
-          case "left":
-            return (this.x = obstacle[i].x + obstacle[i].width);
-          case "right":
-            return (this.x = obstacle[i].x - this.width);
-          case "up":
-            return (this.y = obstacle[i].y + obstacle[i].height);
-          case "down":
-            return (this.y = obstacle[i].y - this.height);
-        }
+  intersectionHandler(obstaclesArray, callback) {
+    for (let i = 0; i < obstaclesArray.length; i++) {
+      if (this.intersects(obstaclesArray[i])) {
+        callback(obstaclesArray[i], i);
       }
     }
   }
@@ -87,51 +81,70 @@ class Rectangle {
 
     if (this.keyState.keyLeft) {
       this.x -= this.speed;
-      this.isIntersection("left", wall);
+      this.intersectionHandler(wall, obstacle => {
+        this.x = obstacle.x + obstacle.width;
+      });
     }
 
     if (this.keyState.keyRight) {
       this.x += this.speed;
-      this.isIntersection("right", wall);
-      this.isIntersection("right", lava);
-
-      // @@@@@@ test
-      // Player Intersects Lava
-      // for (let i = 0; i < lava.length; i++) {
-      //   if (this.intersects(lava[i])) {
-      //     pause = true;
-
-      //     ctx.beginPath();
-      //     ctx.fillStyle = "#ffffff";
-      //     ctx.textAlign = "center";
-      //     ctx.fillText("GAME OVER", canvasWidth / 2, canvasHeigth / 2);
-      //     ctx.closePath();
-
-      //     reset();
-      //   }
-      // }
-
-
-      // Player Intersects bottle
-      for (let i = 0; i < jagger.length; i++) {
-        if (this.intersects(jagger[i])) {
-          score++;
-          jagger.splice(i,1);
-          // ctx.clearRect(jagger[i].width, jagger[i].height, 0, 0);
-        }
-      }
-
-      // @@@@@@ end test
+      this.intersectionHandler(wall, obstacle => {
+        this.x = obstacle.x - this.width;
+      });
     }
 
     if (this.keyState.keyUp) {
       this.y -= this.speed;
-      this.isIntersection("up", wall);
+      this.intersectionHandler(wall, obstacle => {
+        this.y = obstacle.y + obstacle.height;
+      });
     }
 
     if (this.keyState.keyDown) {
       this.y += this.speed;
-      this.isIntersection("down", wall);
+      this.intersectionHandler(wall, obstacle => {
+        this.y = obstacle.y - this.height;
+      });
     }
+
+    // TODO: refactorizar codigo repetido
+    this.intersectionHandler(enemies, () => {
+      this.health--;
+
+      pause = true;
+      lifeReduced = true;
+
+      this.health <= 0
+        ? (gameEnded(), gameover = true)
+        : this.health > 0 && this.health <= 3
+        ? reset()
+        : null;
+    });
+
+    // TODO: refactorizar codigo repetido
+    this.intersectionHandler(water, () => {
+      this.health--;
+
+      pause = true;
+      lifeReduced = true;
+
+      this.health <= 0
+        ? (gameEnded(), gameover = true)
+        : this.health > 0 && this.health <= 3
+        ? reset()
+        : null;
+    });
+
+    this.intersectionHandler(bottles, (_, i) => {
+      score++;
+      bottles.splice(i, 1);
+    });
+
+    this.intersectionHandler(poopingArea, (_, i) => {
+      if (score >= 1) {
+        this.isPoopingArea = true;
+        poopingArea.splice(i, 1);
+      }
+    });
   }
 }
