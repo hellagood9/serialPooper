@@ -19,18 +19,6 @@ const ctx = canvas.getContext("2d");
 canvas.width = canvasWidth;
 canvas.height = canvasHeigth;
 
-
-
-
-  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-  // let posX = 0;
-  // let sense = -1;
-  // const PI_DOUBLE = Math.PI * 2;
-  // let ballRadius = 10;
-  // @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-
-
 function paint(ctx) {
   ctx.fillStyle = "#c5aea4";
   ctx.fillRect(0, 0, canvasWidth, canvasHeigth);
@@ -88,31 +76,6 @@ function paint(ctx) {
     drawState(gameover, "GAME OVER");
     gameover = !gameover;
   }
-
-
-
-
-
-// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-// ctx.beginPath();
-// posX += sense;
-
-// // ctx.arc(canvasWidth / 2 + posX, canvasHeigth / 2, ballRadius, 0, PI_DOUBLE);
-// ctx.arc(canvasWidth / 2 + posX, canvasHeigth / 2, 10, 0, PI_DOUBLE);
-// ctx.fill();
-// ctx.closePath();
-
-// if (canvasWidth / 2 + posX <= canvasWidth - 100) {
-//   sense = 1;
-// }
-
-// if (canvasWidth / 2 + posX >= canvasWidth / 2 + 100) {
-//   sense = -1;
-// }
-// @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-
 }
 
 // :::::: Character :::::: \\
@@ -226,5 +189,6 @@ intervalId = setInterval(() => {
   loadMaps();
 
   player.movePlayer();
+  player.moveEnemy();
   start();
 }, 1000 / fps);

@@ -4,8 +4,8 @@ class Rectangle {
     this.x = x || 0;
     this.width = width || 10;
     this.height = height || 10;
-    this.vx = 0;
-    this.vy = 0;
+    this.ex = 0;
+    this.ey = 0;
 
     this.health = 3;
     this.isPoopingArea = false;
@@ -20,7 +20,7 @@ class Rectangle {
     };
   }
 
-  intersects(obstacle) {
+  collision(obstacle) {
     if (obstacle !== undefined) {
       return (
         this.x < obstacle.x + obstacle.width &&
@@ -31,9 +31,9 @@ class Rectangle {
     }
   }
 
-  intersectionHandler(obstaclesArray, callback) {
+  collisionHandler(obstaclesArray, callback) {
     for (let i = 0; i < obstaclesArray.length; i++) {
-      if (this.intersects(obstaclesArray[i])) {
+      if (this.collision(obstaclesArray[i])) {
         callback(obstaclesArray[i], i);
       }
     }
@@ -84,107 +84,104 @@ class Rectangle {
 
     if (this.keyState.keyLeft) {
       this.x -= this.speed;
-      this.intersectionHandler(wall, obstacle => {
+      this.collisionHandler(wall, obstacle => {
         this.x = obstacle.x + obstacle.width;
       });
     }
 
     if (this.keyState.keyRight) {
       this.x += this.speed;
-      this.intersectionHandler(wall, obstacle => {
+      this.collisionHandler(wall, obstacle => {
         this.x = obstacle.x - this.width;
       });
     }
 
     if (this.keyState.keyUp) {
       this.y -= this.speed;
-      this.intersectionHandler(wall, obstacle => {
+      this.collisionHandler(wall, obstacle => {
         this.y = obstacle.y + obstacle.height;
       });
     }
 
     if (this.keyState.keyDown) {
       this.y += this.speed;
-      this.intersectionHandler(wall, obstacle => {
+      this.collisionHandler(wall, obstacle => {
         this.y = obstacle.y - this.height;
       });
     }
 
     // TODO: refactorizar codigo repetido
-    this.intersectionHandler(enemies, () => {
+    this.collisionHandler(enemies, () => {
       this.health--;
 
       pause = true;
       lifeReduced = true;
 
       this.health <= 0
-        ? (gameEnded(), gameover = true)
+        ? (gameEnded(), (gameover = true))
         : this.health > 0 && this.health <= 3
         ? reset()
         : null;
     });
 
     // TODO: refactorizar codigo repetido
-    this.intersectionHandler(water, () => {
+    this.collisionHandler(water, () => {
       this.health--;
 
       pause = true;
       lifeReduced = true;
 
       this.health <= 0
-        ? (gameEnded(), gameover = true)
+        ? (gameEnded(), (gameover = true))
         : this.health > 0 && this.health <= 3
         ? reset()
         : null;
     });
 
-    this.intersectionHandler(bottles, (_, i) => {
+    this.collisionHandler(bottles, (_, i) => {
       score++;
       bottles.splice(i, 1);
     });
 
-    this.intersectionHandler(poopingArea, (_, i) => {
+    this.collisionHandler(poopingArea, (_, i) => {
       if (score >= 1) {
         this.isPoopingArea = true;
         poopingArea.splice(i, 1);
       }
     });
+  }
 
+  moveEnemy() {
+    for (let i = 0; i < enemies.length; i++) {
+      if (enemies[i].ex !== 0) {
+        enemies[i].x += enemies[i].ex;
 
-// Move enemies
-for (let i = 0; i < enemies.length; i++) {
-  if (enemies[i].vx !== 0) {
-      enemies[i].x += enemies[i].vx;
-
-      for (let j = 0; j < wall.length; j++) {
-          if (enemies[i].intersects(wall[j])) {
-              enemies[i].vx *= -1;
-              enemies[i].x += enemies[i].vx;
-              break;
+        for (let j = 0; j < wall.length; j++) {
+          if (enemies[i].collision(wall[j])) {
+            enemies[i].ex *= -1;
+            enemies[i].x += enemies[i].ex;
+            break;
           }
+        }
       }
-  }
 
-  if (enemies[i].vy !== 0) {
-      enemies[i].y += enemies[i].vy;
+      if (enemies[i].ey !== 0) {
+        enemies[i].y += enemies[i].ey;
 
-      for (let j = 0; j < wall.length; j++) {
-          if (enemies[i].intersects(wall[j])) {
-              enemies[i].vy *= -1;
-              enemies[i].y += enemies[i].vy;
-              break;
+        for (let j = 0; j < wall.length; j++) {
+          if (enemies[i].collision(wall[j])) {
+            enemies[i].ey *= -1;
+            enemies[i].y += enemies[i].ey;
+            break;
           }
+        }
       }
-  }
 
-  // Player Intersects Enemy
-  if (player.intersects(enemies[i])) {
-      gameover = true;
-      pause = true;
-  }
-}
-
-
-
+      // Player collision Enemy
+      if (player.collision(enemies[i])) {
+        gameover = true;
+        pause = true;
+      }
+    }
   }
 }
