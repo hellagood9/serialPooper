@@ -39,9 +39,9 @@ function setMap(map, blockSize) {
           blockSize
         );
         if (map[row][col] === 4) {
-          enemy.ex = 1;
+          enemy.ex = randomFloat(0.5, 1);
         } else if (map[row][col] === 5) {
-          enemy.ey = 1;
+          enemy.ey = randomFloat(0.5, 1);
         }
         enemies.push(enemy);
       } else if (map[row][col] === 6) {

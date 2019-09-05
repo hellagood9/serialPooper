@@ -7,7 +7,7 @@ class Rectangle {
     this.ex = 0;
     this.ey = 0;
 
-    this.health = 3;
+    this.life = 3;
     this.isPoopingArea = false;
 
     this.speed = 1.25;
@@ -112,39 +112,39 @@ class Rectangle {
 
     // TODO: refactorizar codigo repetido
     this.collisionHandler(enemies, () => {
-      this.health--;
+      this.life--;
 
       pause = true;
       lifeReduced = true;
 
-      this.health <= 0
+      this.life <= 0
         ? (gameEnded(), (gameover = true))
-        : this.health > 0 && this.health <= 3
+        : this.life > 0 && this.life <= 3
         ? reset()
         : null;
     });
 
     // TODO: refactorizar codigo repetido
     this.collisionHandler(water, () => {
-      this.health--;
+      this.life--;
 
       pause = true;
       lifeReduced = true;
 
-      this.health <= 0
+      this.life <= 0
         ? (gameEnded(), (gameover = true))
-        : this.health > 0 && this.health <= 3
+        : this.life > 0 && this.life <= 3
         ? reset()
         : null;
     });
 
     this.collisionHandler(bottles, (_, i) => {
-      score++;
+      bottleCounter++;
       bottles.splice(i, 1);
     });
 
     this.collisionHandler(poopingArea, (_, i) => {
-      if (score >= 1) {
+      if (bottleCounter >= 2) {
         this.isPoopingArea = true;
         poopingArea.splice(i, 1);
       }
@@ -153,11 +153,29 @@ class Rectangle {
 
   moveEnemy() {
     for (let i = 0; i < enemies.length; i++) {
+
       if (enemies[i].ex !== 0) {
         enemies[i].x += enemies[i].ex;
 
+        // TODO: refactorizar codigo repetido
         for (let j = 0; j < wall.length; j++) {
           if (enemies[i].collision(wall[j])) {
+            enemies[i].ex *= -1;
+            enemies[i].x += enemies[i].ex;
+            break;
+          }
+        }
+        // TODO: refactorizar codigo repetido
+        for (let j = 0; j < water.length; j++) {
+          if (enemies[i].collision(water[j])) {
+            enemies[i].ex *= -1;
+            enemies[i].x += enemies[i].ex;
+            break;
+          }
+        }
+        // TODO: refactorizar codigo repetido
+        for (let j = 0; j < bottles.length; j++) {
+          if (enemies[i].collision(bottles[j])) {
             enemies[i].ex *= -1;
             enemies[i].x += enemies[i].ex;
             break;
@@ -168,6 +186,7 @@ class Rectangle {
       if (enemies[i].ey !== 0) {
         enemies[i].y += enemies[i].ey;
 
+        // TODO: refactorizar codigo repetido
         for (let j = 0; j < wall.length; j++) {
           if (enemies[i].collision(wall[j])) {
             enemies[i].ey *= -1;
@@ -175,12 +194,24 @@ class Rectangle {
             break;
           }
         }
-      }
 
-      // Player collision Enemy
-      if (player.collision(enemies[i])) {
-        gameover = true;
-        pause = true;
+        // TODO: refactorizar codigo repetido
+        for (let j = 0; j < water.length; j++) {
+          if (enemies[i].collision(water[j])) {
+            enemies[i].ey *= -1;
+            enemies[i].y += enemies[i].ey;
+            break;
+          }
+        }
+
+        // TODO: refactorizar codigo repetido
+        for (let j = 0; j < bottles.length; j++) {
+          if (enemies[i].collision(bottles[j])) {
+            enemies[i].ey *= -1;
+            enemies[i].y += enemies[i].ey;
+            break;
+          }
+        }
       }
     }
   }
