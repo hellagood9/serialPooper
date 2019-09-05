@@ -1,0 +1,6 @@
+@font-face {
+  font-family: 'Blue Sky 8x8';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Blue Sky 8x8'), url(../assets/BlueSky.ttf) format('ttf');
+}

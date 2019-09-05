@@ -1,4 +1,7 @@
 // :::::: Global :::::: \\
+const font = "Blue Sky 8x8";
+document.fonts.load('10pt "Blue Sky 8x8"');
+
 let currentMap = 0;
 let fps = 60;
 
@@ -11,10 +14,37 @@ let intervalId = undefined;
 // :::::: Canvas :::::: \\
 let canvasWidth = 300;
 let canvasHeigth = 200;
+// let canvasWidth = 960;
+// let canvasHeigth = 704;
+
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-canvas.width = canvasWidth;
-canvas.height = canvasHeigth;
+
+// const canvasWidth = window.innerWidth;
+// const canvasHeigth = window.innerHeight;
+const ratio = window.devicePixelRatio;
+
+function setCanvasDimensions() {
+  canvas.setAttribute("width", `${canvasWidth}px`);
+  canvas.setAttribute("height", `${canvasHeigth}px`);
+}
+
+setCanvasDimensions();
+
+window.onresize = setCanvasDimensions;
+
+canvas.width = canvasWidth * ratio;
+canvas.height = canvasHeigth * ratio;
+ctx.scale(ratio, ratio);
+ctx.imageSmoothingEnabled = false;
+
+// :::::: Character :::::: \\
+const characterWidth = 10;
+const characterHeight = 10;
+const player = new Rectangle(40, 100, characterWidth, characterHeight);
+
+
+
 
 function paint(ctx) {
   ctx.fillStyle = "#c5aea4";
@@ -24,20 +54,22 @@ function paint(ctx) {
   ctx.beginPath();
   ctx.fillStyle = "#fff";
   ctx.textAlign = "start";
-  ctx.fillText("BOTTLES: " + bottleCounter, 10, 20);
+  // TODO
+  ctx.font = `9px "${font}"`;
+  ctx.fillText("Bottles: " + bottleCounter, 10, 20);
   ctx.closePath();
 
   // Draw life status
   ctx.beginPath();
   ctx.fillStyle = "#fff";
-  ctx.fillText("LIFE: " + player.life, 130, 20);
+  ctx.fillText("Life: " + player.life, 130, 20);
   ctx.closePath();
 
   // Draw pooping status
-  if (bottleCounter >= 2 && bottleCounter % 2 == 0) {
+  if (bottleCounter >= 2) {
     ctx.beginPath();
     ctx.fillStyle = "#fff";
-    ctx.fillText("POO NOW!", 230, 20);
+    ctx.fillText("Poo NOW!", 230, 20);
     ctx.closePath();
   }
 
@@ -46,7 +78,10 @@ function paint(ctx) {
   drawEnemies();
   drawBottles();
   drawPoopingArea();
-  drawPlayer();
+  // drawPlayer();
+
+  player.draw();
+  // enemy.draw();
 
   if (pause && lifeReduced && !gameover)
     drawState(lifeReduced, "OOOPS! TRY AGAIN");
@@ -56,11 +91,6 @@ function paint(ctx) {
     gameover = !gameover;
   }
 }
-
-// :::::: Character :::::: \\
-const characterWidth = 10;
-const characterHeight = 10;
-const player = new Rectangle(40, 100, characterWidth, characterHeight);
 
 document.addEventListener("keydown", e => {
   if (e.code === "Space") {
@@ -119,6 +149,9 @@ intervalId = setInterval(() => {
   loadMaps();
 
   player.movePlayer();
-  player.moveEnemy();
+  for (let i = 0; i < enemies.length; i++) {
+    enemies[i].moveEnemy();
+  }
+  
   start();
 }, 1000 / fps);

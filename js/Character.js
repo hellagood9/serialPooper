@@ -1,3 +1,22 @@
+//Creating an Image object for our character
+let character = new Image();
+character.src = "../assets/test.png";
+
+// let srcX = 220;
+// let srcY = 220;
+
+const sprite = {
+  width: 96,
+  height: 128,
+  cols: 3,
+  rows: 4
+};
+
+let characterSpriteWidth = sprite.width / sprite.cols;
+let characterSpriteHeight = sprite.height / sprite.rows;
+
+// let currentFrame = 0;
+
 class Rectangle {
   constructor(x, y, width, height) {
     this.y = y || 0;
@@ -6,6 +25,8 @@ class Rectangle {
     this.height = height || 10;
     this.ex = 0;
     this.ey = 0;
+    this.currentFrame = 0;
+    this.spriteY = 0;
 
     this.life = 3;
     this.isPoopingArea = false;
@@ -41,6 +62,20 @@ class Rectangle {
 
   fill(ctx) {
     ctx.fillRect(this.x, this.y, this.width, this.height);
+  }
+
+  draw() {
+    ctx.drawImage(
+      character,
+      this.currentFrame * characterSpriteWidth,
+      this.spriteY,
+      characterSpriteWidth,
+      characterSpriteHeight,
+      this.x,
+      this.y,
+      10,
+      10
+    );
   }
 
   movePlayer() {
@@ -84,6 +119,12 @@ class Rectangle {
 
     if (this.keyState.keyLeft) {
       this.x -= this.speed;
+      this.spriteY = 32;
+
+      // TODO:
+      this.currentFrame--
+      if(this.currentFrame < 0) this.currentFrame = 2
+
       this.collisionHandler(wall, obstacle => {
         this.x = obstacle.x + obstacle.width;
       });
@@ -91,6 +132,13 @@ class Rectangle {
 
     if (this.keyState.keyRight) {
       this.x += this.speed;
+      this.spriteY = 64;
+
+      // TODO:
+      this.currentFrame++
+      // this.currentFrame = ++this.currentFrame % spriteCols
+      if(this.currentFrame > 2) this.currentFrame = 0
+
       this.collisionHandler(wall, obstacle => {
         this.x = obstacle.x - this.width;
       });
@@ -98,6 +146,12 @@ class Rectangle {
 
     if (this.keyState.keyUp) {
       this.y -= this.speed;
+      this.spriteY = 96;
+
+      // TODO:
+      this.currentFrame--
+      if(this.currentFrame < 0) this.currentFrame = 2
+
       this.collisionHandler(wall, obstacle => {
         this.y = obstacle.y + obstacle.height;
       });
@@ -105,6 +159,12 @@ class Rectangle {
 
     if (this.keyState.keyDown) {
       this.y += this.speed;
+      this.spriteY = 0;
+
+      // TODO:
+      this.currentFrame--
+      if(this.currentFrame < 0) this.currentFrame = 2
+
       this.collisionHandler(wall, obstacle => {
         this.y = obstacle.y - this.height;
       });
@@ -149,70 +209,5 @@ class Rectangle {
         poopingArea.splice(i, 1);
       }
     });
-  }
-
-  moveEnemy() {
-    for (let i = 0; i < enemies.length; i++) {
-
-      if (enemies[i].ex !== 0) {
-        enemies[i].x += enemies[i].ex;
-
-        // TODO: refactorizar codigo repetido
-        for (let j = 0; j < wall.length; j++) {
-          if (enemies[i].collision(wall[j])) {
-            enemies[i].ex *= -1;
-            enemies[i].x += enemies[i].ex;
-            break;
-          }
-        }
-        // TODO: refactorizar codigo repetido
-        for (let j = 0; j < water.length; j++) {
-          if (enemies[i].collision(water[j])) {
-            enemies[i].ex *= -1;
-            enemies[i].x += enemies[i].ex;
-            break;
-          }
-        }
-        // TODO: refactorizar codigo repetido
-        for (let j = 0; j < bottles.length; j++) {
-          if (enemies[i].collision(bottles[j])) {
-            enemies[i].ex *= -1;
-            enemies[i].x += enemies[i].ex;
-            break;
-          }
-        }
-      }
-
-      if (enemies[i].ey !== 0) {
-        enemies[i].y += enemies[i].ey;
-
-        // TODO: refactorizar codigo repetido
-        for (let j = 0; j < wall.length; j++) {
-          if (enemies[i].collision(wall[j])) {
-            enemies[i].ey *= -1;
-            enemies[i].y += enemies[i].ey;
-            break;
-          }
-        }
-
-        // TODO: refactorizar codigo repetido
-        for (let j = 0; j < water.length; j++) {
-          if (enemies[i].collision(water[j])) {
-            enemies[i].ey *= -1;
-            enemies[i].y += enemies[i].ey;
-            break;
-          }
-        }
-
-        // TODO: refactorizar codigo repetido
-        for (let j = 0; j < bottles.length; j++) {
-          if (enemies[i].collision(bottles[j])) {
-            enemies[i].ey *= -1;
-            enemies[i].y += enemies[i].ey;
-            break;
-          }
-        }
-      }
-    }
   }
 }

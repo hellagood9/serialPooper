@@ -1,24 +1,52 @@
+// let wallImg = new Image();
+// wallImg.src = "../assets/wall.png";
+
+// function draw(what, whereX, whereY, itWidth, itHeight, itX, itY, sizeX, sizeY) {
+//   ctx.drawImage(
+//     what, whereX, whereY, itWidth, itHeight, itX, itY, sizeX, sizeY
+//   );
+// }
+
 //Draw walls
 function drawWalls() {
   ctx.fillStyle = "#b29a6d";
   for (let i = 0; i < wall.length; i++) {
-    wall[i].fill(ctx);
+    //  wall[i].fill(ctx);
+    
+    wall[i].draw()
+
+    
+      // wall[i] = new Image();
+      // wall[i].onload = function() {
+      //     ctx.drawImage(this, this.x, this.y);         
+      // };
+      // wall[i].src = "../assets/wall.png";
+  
+    
+
   }
 }
 
+
+
+
+
 // Draw water
 function drawWater() {
-  ctx.fillStyle = "#bfe9fb";
+  // ctx.fillStyle = "#bfe9fb";
   for (let i = 0; i < water.length; i++) {
-    water[i].fill(ctx);
+    // water[i].fill(ctx);
+
+    water[i].draw()
   }
 }
 
 // Draw enemies
 function drawEnemies() {
-  ctx.fillStyle = "#000";
+  // ctx.fillStyle = "#000";
   for (let i = 0; i < enemies.length; i++) {
-    enemies[i].fill(ctx);
+    // enemies[i].fill(ctx);
+    enemies[i].draw();
   }
 }
 
@@ -39,12 +67,12 @@ function drawPoopingArea() {
 }
 
 // Draw player
-function drawPlayer() {
-  ctx.beginPath();
-  ctx.fillStyle = "#fbba18";
-  player.fill(ctx);
-  ctx.closePath();
-}
+// function drawPlayer() {
+//   ctx.beginPath();
+//   ctx.fillStyle = "#fbba18";
+//   player.fill(ctx);
+//   ctx.closePath();
+// }
 
 // Draw state
 function drawState(state, string) {

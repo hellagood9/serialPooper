@@ -21,18 +21,18 @@ function setMap(map, blockSize) {
     for (col = 0, columns = map[row].length; col < columns; col++) {
       if (map[row][col] === 1) {
         wall.push(
-          new Rectangle(col * blockSize, row * blockSize, blockSize, blockSize)
+          new Wall(col * blockSize, row * blockSize, blockSize, blockSize)
         );
       } else if (map[row][col] === 2) {
         water.push(
-          new Rectangle(col * blockSize, row * blockSize, blockSize, blockSize)
+          new Water(col * blockSize, row * blockSize, blockSize, blockSize)
         );
       } else if (map[row][col] === 3) {
         bottles.push(
           new Rectangle(col * blockSize, row * blockSize, blockSize, blockSize)
         );
       } else if (map[row][col] > 3 && map[row][col] < 6) {
-        const enemy = new Rectangle(
+        const enemy = new Enemy(
           col * blockSize,
           row * blockSize,
           blockSize,
