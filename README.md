@@ -1,4 +1,6 @@
-# serialPooper
+![Serial Pooper](https://bit.ly/2k7JqT4)
+
+# SerialPooper: a game where expectation and reality collapse
 
 ## Desafíos.
 Mi mayor desafío ha sido estructurar el juego de Forma que cada cosa no cumpliera más de una función y el código acabase Repitiéndose.
