@@ -1,21 +1,16 @@
 //Creating an Image object for our character
 let character = new Image();
-character.src = "../assets/test.png";
-
-// let srcX = 220;
-// let srcY = 220;
+character.src = "../assets/character.png";
 
 const sprite = {
-  width: 96,
-  height: 128,
-  cols: 3,
-  rows: 4
+  width: 64,
+  height: 44,
+  cols: 4,
+  rows: 2
 };
 
 let characterSpriteWidth = sprite.width / sprite.cols;
 let characterSpriteHeight = sprite.height / sprite.rows;
-
-// let currentFrame = 0;
 
 class Rectangle {
   constructor(x, y, width, height) {
@@ -31,7 +26,7 @@ class Rectangle {
     this.life = 3;
     this.isPoopingArea = false;
 
-    this.speed = 1.25;
+    this.speed = 1;
     this.keyState = {
       keyLeft: false,
       keyRight: false,
@@ -73,8 +68,8 @@ class Rectangle {
       characterSpriteHeight,
       this.x,
       this.y,
-      10,
-      10
+      9,
+      9
     );
   }
 
@@ -119,11 +114,10 @@ class Rectangle {
 
     if (this.keyState.keyLeft) {
       this.x -= this.speed;
-      this.spriteY = 32;
+      this.spriteY = 21;
 
-      // TODO:
-      this.currentFrame--
-      if(this.currentFrame < 0) this.currentFrame = 2
+      this.currentFrame--;
+      if (this.currentFrame < 0) this.currentFrame = 2;
 
       this.collisionHandler(wall, obstacle => {
         this.x = obstacle.x + obstacle.width;
@@ -132,12 +126,10 @@ class Rectangle {
 
     if (this.keyState.keyRight) {
       this.x += this.speed;
-      this.spriteY = 64;
+      this.spriteY = 0;
 
-      // TODO:
-      this.currentFrame++
-      // this.currentFrame = ++this.currentFrame % spriteCols
-      if(this.currentFrame > 2) this.currentFrame = 0
+      this.currentFrame++;
+      if (this.currentFrame > 2) this.currentFrame = 0;
 
       this.collisionHandler(wall, obstacle => {
         this.x = obstacle.x - this.width;
@@ -146,11 +138,9 @@ class Rectangle {
 
     if (this.keyState.keyUp) {
       this.y -= this.speed;
-      this.spriteY = 96;
 
-      // TODO:
-      this.currentFrame--
-      if(this.currentFrame < 0) this.currentFrame = 2
+      this.currentFrame--;
+      if (this.currentFrame < 0) this.currentFrame = 2;
 
       this.collisionHandler(wall, obstacle => {
         this.y = obstacle.y + obstacle.height;
@@ -159,11 +149,9 @@ class Rectangle {
 
     if (this.keyState.keyDown) {
       this.y += this.speed;
-      this.spriteY = 0;
 
-      // TODO:
-      this.currentFrame--
-      if(this.currentFrame < 0) this.currentFrame = 2
+      this.currentFrame--;
+      if (this.currentFrame < 0) this.currentFrame = 2;
 
       this.collisionHandler(wall, obstacle => {
         this.y = obstacle.y - this.height;
@@ -185,7 +173,7 @@ class Rectangle {
     });
 
     // TODO: refactorizar codigo repetido
-    this.collisionHandler(water, () => {
+    this.collisionHandler(spike, () => {
       this.life--;
 
       pause = true;

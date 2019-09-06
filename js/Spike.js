@@ -1,8 +1,8 @@
 //Creating an Image object for our enemy
-let wallImg = new Image();
-wallImg.src = "../assets/wall_1.png";
+let waterImg = new Image();
+waterImg.src = "../assets/spikes_2.png";
 
-class Wall {
+class Spike {
   constructor(x, y, width, height) {
     this.y = y || 0;
     this.x = x || 0;
@@ -12,7 +12,7 @@ class Wall {
 
   draw() {
     ctx.drawImage(
-      wallImg,
+      waterImg,
       0,
       0,
       this.width,

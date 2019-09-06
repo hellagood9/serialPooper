@@ -2,6 +2,14 @@
 const font = "Blue Sky 8x8";
 document.fonts.load('10pt "Blue Sky 8x8"');
 
+const background = new Image();
+background.src = "./assets/floor_1b.png";
+
+const intro = document.getElementById("intro");
+const welcomeBtn = document.getElementById("welcomeBtn");
+
+welcomeBtn.onclick = () => intro.style.display = "none";
+
 let currentMap = 0;
 let fps = 60;
 
@@ -14,14 +22,10 @@ let intervalId = undefined;
 // :::::: Canvas :::::: \\
 let canvasWidth = 300;
 let canvasHeigth = 200;
-// let canvasWidth = 960;
-// let canvasHeigth = 704;
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-// const canvasWidth = window.innerWidth;
-// const canvasHeigth = window.innerHeight;
 const ratio = window.devicePixelRatio;
 
 function setCanvasDimensions() {
@@ -43,33 +47,34 @@ const characterWidth = 10;
 const characterHeight = 10;
 const player = new Rectangle(40, 100, characterWidth, characterHeight);
 
-
-
-
 function paint(ctx) {
-  ctx.fillStyle = "#c5aea4";
-  ctx.fillRect(0, 0, canvasWidth, canvasHeigth);
+  // Draw Background
+  ctx.beginPath();
+  var pat = ctx.createPattern(background, "repeat");
+  ctx.rect(0, 0, canvasWidth, canvasHeigth);
+  ctx.fillStyle = pat;
+  ctx.fill();
+  ctx.closePath();
 
   // Draw bottleCounter status
   ctx.beginPath();
   ctx.fillStyle = "#fff";
   ctx.textAlign = "start";
-  // TODO
-  ctx.font = `9px "${font}"`;
-  ctx.fillText("Bottles: " + bottleCounter, 10, 20);
+  ctx.font = `8px "${font}"`;
+  ctx.fillText("Bottles: " + bottleCounter, 10, 195);
   ctx.closePath();
 
   // Draw life status
   ctx.beginPath();
   ctx.fillStyle = "#fff";
-  ctx.fillText("Life: " + player.life, 130, 20);
+  ctx.fillText("Life: " + player.life, 120, 195);
   ctx.closePath();
 
   // Draw pooping status
   if (bottleCounter >= 2) {
     ctx.beginPath();
     ctx.fillStyle = "#fff";
-    ctx.fillText("Poo NOW!", 230, 20);
+    ctx.fillText("Poo NOW!", 225, 195);
     ctx.closePath();
   }
 
@@ -78,7 +83,6 @@ function paint(ctx) {
   drawEnemies();
   drawBottles();
   drawPoopingArea();
-  // drawPlayer();
 
   player.draw();
   // enemy.draw();
@@ -149,9 +153,10 @@ intervalId = setInterval(() => {
   loadMaps();
 
   player.movePlayer();
+
   for (let i = 0; i < enemies.length; i++) {
     enemies[i].moveEnemy();
   }
-  
+
   start();
-}, 1000 / fps);
+}, 1000 / 30);

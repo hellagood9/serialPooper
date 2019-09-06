@@ -1,8 +1,8 @@
 //Creating an Image object for our enemy
-let wallImg = new Image();
-wallImg.src = "../assets/wall_1.png";
+let bottleImg = new Image();
+bottleImg.src = "../assets/bottle.png";
 
-class Wall {
+class Bottle {
   constructor(x, y, width, height) {
     this.y = y || 0;
     this.x = x || 0;
@@ -12,15 +12,15 @@ class Wall {
 
   draw() {
     ctx.drawImage(
-      wallImg,
+      bottleImg,
       0,
       0,
       this.width,
       this.height,
       this.x,
       this.y,
-      10,
-      10
+      6,
+      6
     );
   }
 }

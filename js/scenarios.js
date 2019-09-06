@@ -1,6 +1,6 @@
 // :::::: Scenario :::::: \\
 let wall = [];
-let water = [];
+let spike = [];
 let bottles = [];
 let enemies = [];
 let poopingArea = [];
@@ -12,7 +12,7 @@ function setMap(map, blockSize) {
   let rows = 0;
 
   wall.length = 0;
-  water.length = 0;
+  spike.length = 0;
   bottles.length = 0;
   enemies.length = 0;
   poopingArea.length = 0;
@@ -24,12 +24,12 @@ function setMap(map, blockSize) {
           new Wall(col * blockSize, row * blockSize, blockSize, blockSize)
         );
       } else if (map[row][col] === 2) {
-        water.push(
-          new Water(col * blockSize, row * blockSize, blockSize, blockSize)
+        spike.push(
+          new Spike(col * blockSize, row * blockSize, blockSize, blockSize)
         );
       } else if (map[row][col] === 3) {
         bottles.push(
-          new Rectangle(col * blockSize, row * blockSize, blockSize, blockSize)
+          new Bottle(col * blockSize, row * blockSize, blockSize, blockSize)
         );
       } else if (map[row][col] > 3 && map[row][col] < 6) {
         const enemy = new Enemy(
@@ -46,7 +46,7 @@ function setMap(map, blockSize) {
         enemies.push(enemy);
       } else if (map[row][col] === 6) {
         poopingArea.push(
-          new Rectangle(col * blockSize, row * blockSize, 20, 20)
+          new PooArea(col * blockSize, row * blockSize, 10, 10)
         );
       }
     }

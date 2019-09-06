@@ -1,20 +1,15 @@
 //Creating an Image object for our enemy
 let enemy = new Image();
-enemy.src = "../assets/test.png";
+enemy.src = "../assets/enemy.png";
 
-// let srcX = 220;
-// let srcY = 220;
+let spriteWidth = 66;
+let spriteHeight = 44;
 
-let spriteWidth = 96;
-let spriteHeight = 128;
-
-let spriteCols = 3;
-let spriteRows = 4;
+let spriteCols = 4;
+let spriteRows = 2;
 
 let enemySpriteWidth = spriteWidth / spriteCols;
 let enemySpriteHeight = spriteHeight / spriteRows;
-
-// let currentFrame = 0;
 
 class Enemy {
   constructor(x, y, width, height) {
@@ -27,7 +22,7 @@ class Enemy {
     this.currentFrame = 0;
     this.speed = 1.25;
     this.spriteX = 0;
-    this.spriteY = 0
+    this.spriteY = 0;
   }
 
   draw() {
@@ -64,13 +59,12 @@ class Enemy {
         if (this.collision(wall[j])) {
           this.ex *= -1;
           this.x += this.ex;
-                  
           break;
         }
       }
       // TODO: refactorizar codigo repetido
-      for (let j = 0; j < water.length; j++) {
-        if (this.collision(water[j])) {
+      for (let j = 0; j < spike.length; j++) {
+        if (this.collision(spike[j])) {
           this.ex *= -1;
           this.x += this.ex;
           break;
@@ -86,10 +80,11 @@ class Enemy {
       }
 
       if (this.ex > 0) {
-        this.spriteY = 64;
+        this.spriteY = 0;
       } else {
-        this.spriteY = 32;
-      }  
+        this.spriteY = 22;
+      }
+
     }
 
     if (this.ey !== 0) {
@@ -105,8 +100,8 @@ class Enemy {
       }
 
       // TODO: refactorizar codigo repetido
-      for (let j = 0; j < water.length; j++) {
-        if (this.collision(water[j])) {
+      for (let j = 0; j < spike.length; j++) {
+        if (this.collision(spike[j])) {
           this.ey *= -1;
           this.y += this.ey;
           break;
@@ -125,10 +120,8 @@ class Enemy {
       if (this.ey > 0) {
         this.spriteY = 0;
       } else {
-        this.spriteY = 96;
-      }  
+        this.spriteY = 22;
+      }
     }
-
-
   }
 }
